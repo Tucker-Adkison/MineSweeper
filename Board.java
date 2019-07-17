@@ -15,7 +15,9 @@ class Board extends JPanel implements ComponentListener {
    private static int height = MineSweeper.getHeight();
    private static int width = MineSweeper.getWidth();
    private static final int border = 50;
-   private int squareSize = 0;
+   private static int squareSize = 0;
+   private static int clockX = 0;
+   private static int clockY = 0;
 
    @Override
    public void setSize(Dimension d) {
@@ -39,7 +41,9 @@ class Board extends JPanel implements ComponentListener {
       this.makeBoard();
       Graphics2D g2 = (Graphics2D) g;
       g.setFont(new Font("Comic Sans MS", Font.PLAIN, 30));
-      g.drawString(String.valueOf((System.nanoTime() - startTime) / 1000000000), width/2, border/2);
+      clockX = border + squareSize * board.length + (border/2);
+      clockY = height - border - squareSize * 3;
+      g.drawString(String.valueOf((System.nanoTime() - startTime) / 1000000000), clockX, clockY);
       for (int i = 0; i < values.length; i++) {
          for (int j = 0; j < values[0].length; j++) {
             g2.setColor(Color.black);
@@ -51,7 +55,7 @@ class Board extends JPanel implements ComponentListener {
                Image img = Toolkit.getDefaultToolkit().getImage("images/flag.png");
                g2.setColor(Color.LIGHT_GRAY);
                g2.fill(board[i][j]);
-               g.drawImage(img, (i * 50 - 15) + border, (j * 50 - 15) + border, 85, 85, this);
+               g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize, squareSize, this);
             } else if (values[i][j] == '*') {
                g2.setColor(Color.blue);
                //g2.setColor(Color.LIGHT_GRAY);
@@ -61,11 +65,11 @@ class Board extends JPanel implements ComponentListener {
                if (Character.getNumericValue(values[i][j]) == 1) {
                   g2.setColor(Color.white);
                   g2.fill(board[i][j]);
-                  g.drawImage(img, (i * 50 - 10), (j * 50 - 20), 100, 100, this);
+                  g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize, squareSize, this);
                } else {
                   g2.setColor(Color.white);
                   g2.fill(board[i][j]);
-                  g.drawImage(img, (i * 50 - 25), (j * 50 - 25), 100, 100, this);
+                  g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize, squareSize, this);
                }
             } else {
                g2.setColor(Color.LIGHT_GRAY);
@@ -89,12 +93,8 @@ class Board extends JPanel implements ComponentListener {
       return;
    }
 
-   public static int getFrameBorder() {
-      return border;
-   }
-
-   public static int getFrameWidth() {
-      return width;
+   public static Rectangle checkChanges() {
+      return new Rectangle(border + squareSize * board.length, 0, width - (border + squareSize * board.length), height);
    }
 
    public static char[][] getValuesArray() {
