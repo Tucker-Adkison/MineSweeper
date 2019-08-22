@@ -9,6 +9,7 @@ class TimeCount extends TimerTask {
 
    @Override
    public void run() {
+      System.out.println(enabled);
       if(enabled) {
          MineSweeper.getBoard().paintImmediately(Board.checkChanges());
       }

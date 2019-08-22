@@ -6,7 +6,7 @@ import java.util.Queue;
 
 class Events implements MouseListener {
    private int numberOfMines = 0;
-   private boolean enable = true;
+   private static boolean enable = true;
 
    @Override
    public void mouseClicked(MouseEvent e) {
@@ -20,9 +20,9 @@ class Events implements MouseListener {
    @Override
    public void mouseReleased(MouseEvent e) {
       if(enable) {
-         if(Board.getRightFlags() == Board.getMines()) {
+         if(Board.getRightFlags() == Board.getMines() || Board.getRightFlags() - 1 == Board.getMines()) {
             enable = false;
-            TimeCount.disable();
+            MineSweeper.getBoard().repaint();
             return;
          }
          if(e.getButton() == MouseEvent.BUTTON3 && Board.getFlag() != 0) {
@@ -66,15 +66,18 @@ class Events implements MouseListener {
                         calculate(i, j);
                      } else {
                         enable = false;
-                        TimeCount.disable();
                      }
                   }
                }
             }
          }
+      } else {
+         TimeCount.disable();
       }
+      MineSweeper.getBoard().repaint();
    }
-
+   
+   // BFS
    public void calculate(int x, int y) {
       char[][] G = Board.getValuesArray();
       Queue<int[]> Q = new LinkedList<int[]>(neighbors(G, x, y));
@@ -150,5 +153,9 @@ class Events implements MouseListener {
    @Override
    public void mouseExited(MouseEvent e) {
 
+   }
+
+   public static boolean getEnabled() {
+      return enable;
    }
 }

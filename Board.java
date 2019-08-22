@@ -12,6 +12,7 @@ class Board extends JPanel implements ComponentListener {
    private static int flags = mines;
    private static int rightFlags = 0;
    private long startTime = 0;
+   private long currentTime = 0;
    private static int height = MineSweeper.getHeight();
    private static int width = MineSweeper.getWidth();
    private static final int border = 50;
@@ -43,7 +44,10 @@ class Board extends JPanel implements ComponentListener {
       g.setFont(new Font("Comic Sans MS", Font.PLAIN, 30));
       clockX = border + squareSize * board.length + (border/2);
       clockY = height - border - squareSize * 3;
-      g.drawString(String.valueOf((System.nanoTime() - startTime) / 1000000000), clockX, clockY);
+      if(Events.getEnabled()) {
+         currentTime = (System.nanoTime() - startTime) / 1000000000;
+      }
+      g.drawString(String.valueOf(currentTime),clockX, clockY);
       for (int i = 0; i < values.length; i++) {
          for (int j = 0; j < values[0].length; j++) {
             g2.setColor(Color.black);
@@ -54,17 +58,25 @@ class Board extends JPanel implements ComponentListener {
             } else if (values[i][j] == 'f' || values[i][j] == 's') {
                Image img = Toolkit.getDefaultToolkit().getImage("images/flag.png");
                g2.setColor(Color.LIGHT_GRAY);
-               g2.fill(board[i][j]);
+               g2.fill(board[i][j]); 
                g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize, squareSize, this);
             } else if (values[i][j] == '*') {
-               g2.setColor(Color.blue);
-               //g2.setColor(Color.LIGHT_GRAY);
-               g2.fill(board[i][j]);
+               if(Events.getEnabled()) {
+                  g2.setColor(Color.LIGHT_GRAY);
+                  g2.fill(board[i][j]);
+               } else {
+                  Image img = Toolkit.getDefaultToolkit().getImage("images/mine.png");
+                  g2.setColor(Color.white);
+                  g2.fill(board[i][j]); 
+                  g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize - 10, squareSize - 10, this);
+               }
             } else if (Character.getNumericValue(values[i][j]) != -1) {
                Image img = Toolkit.getDefaultToolkit().getImage("images/" + String.valueOf(values[i][j]) + ".png");
                if (Character.getNumericValue(values[i][j]) == 1) {
                   g2.setColor(Color.white);
                   g2.fill(board[i][j]);
+                  g.setFont(new Font("Comic Sans MS", Font.PLAIN, 30));
+                  g.setColor(Color.blue);
                   g.drawImage(img, (i * squareSize) + border, (j * squareSize) + border, squareSize, squareSize, this);
                } else {
                   g2.setColor(Color.white);
